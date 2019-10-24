@@ -8,8 +8,8 @@
 
 // Wifi Parameters
 
-#define WIFI_SSID "your-ssid-name"
-#define WIFI_PASSWORD "your-ssid-password"
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
 
 // Static IP Parameters
 
@@ -20,10 +20,10 @@
 
 // MQTT Parameters
 
-#define MQTT_BROKER "w.x.y.z"
-#define MQTT_CLIENTID "GarHAge"
-#define MQTT_USERNAME "your-mqtt-username"
-#define MQTT_PASSWORD "your-mqtt-password"
+#define MQTT_BROKER "192.168.1.50"
+#define MQTT_CLIENTID ""
+#define MQTT_USERNAME ""
+#define MQTT_PASSWORD ""
 
 // Relay Parameters
 
@@ -31,22 +31,30 @@
 
 // Door 1 Parameters
 
-#define DOOR1_ALIAS "Door 1"
+#define DOOR1_ALIAS "Iso ovi"
 #define MQTT_DOOR1_ACTION_TOPIC "garage/door/1/action"
 #define MQTT_DOOR1_STATUS_TOPIC "garage/door/1/status"
-#define DOOR1_OPEN_PIN D2
-#define DOOR1_CLOSE_PIN D2
+#define DOOR1_OPEN_PIN D1
+#define DOOR1_CLOSE_PIN D1
 #define DOOR1_STATUS_PIN D5
 #define DOOR1_STATUS_SWITCH_LOGIC "NO"
 
-// Door 2 Parameters
+// Door 2-4 Parameters
 
-#define DOOR2_ENABLED false
-#define DOOR2_ALIAS "Door 2"
+#define DOOR2_ALIAS "Sivuovi"
 #define MQTT_DOOR2_ACTION_TOPIC "garage/door/2/action"
 #define MQTT_DOOR2_STATUS_TOPIC "garage/door/2/status"
-#define DOOR2_OPEN_PIN D1
-#define DOOR2_CLOSE_PIN D1
-#define DOOR2_STATUS_PIN D6
+#define DOOR2_STATUS_PIN D2
 #define DOOR2_STATUS_SWITCH_LOGIC "NO"
 
+#define DOOR3_ALIAS "Kylmavarasto"
+#define MQTT_DOOR3_ACTION_TOPIC "garage/door/3/action"
+#define MQTT_DOOR3_STATUS_TOPIC "garage/door/3/status"
+#define DOOR3_STATUS_PIN D3
+#define DOOR3_STATUS_SWITCH_LOGIC "NO"
+
+#define DOOR4_ALIAS "Puutarhavarasto"
+#define MQTT_DOOR4_ACTION_TOPIC "garage/door/4/action"
+#define MQTT_DOOR4_STATUS_TOPIC "garage/door/4/status"
+#define DOOR4_STATUS_PIN D4
+#define DOOR4_STATUS_SWITCH_LOGIC "NO"

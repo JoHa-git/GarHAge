@@ -43,20 +43,33 @@ const int door1_closePin = DOOR1_CLOSE_PIN;
 const int door1_statusPin = DOOR1_STATUS_PIN;
 const char* door1_statusSwitchLogic = DOOR1_STATUS_SWITCH_LOGIC;
 
-const boolean door2_enabled = DOOR2_ENABLED;
 const char* door2_alias = DOOR2_ALIAS;
 const char* mqtt_door2_action_topic = MQTT_DOOR2_ACTION_TOPIC;
 const char* mqtt_door2_status_topic = MQTT_DOOR2_STATUS_TOPIC;
-const int door2_openPin = DOOR2_OPEN_PIN;
-const int door2_closePin = DOOR2_CLOSE_PIN;
 const int door2_statusPin = DOOR2_STATUS_PIN;
 const char* door2_statusSwitchLogic = DOOR2_STATUS_SWITCH_LOGIC;
+
+const char* door3_alias = DOOR3_ALIAS;
+const char* mqtt_door3_action_topic = MQTT_DOOR3_ACTION_TOPIC;
+const char* mqtt_door3_status_topic = MQTT_DOOR3_STATUS_TOPIC;
+const int door3_statusPin = DOOR3_STATUS_PIN;
+const char* door3_statusSwitchLogic = DOOR3_STATUS_SWITCH_LOGIC;
+
+const char* door4_alias = DOOR4_ALIAS;
+const char* mqtt_door4_action_topic = MQTT_DOOR4_ACTION_TOPIC;
+const char* mqtt_door4_status_topic = MQTT_DOOR4_STATUS_TOPIC;
+const int door4_statusPin = DOOR4_STATUS_PIN;
+const char* door4_statusSwitchLogic = DOOR4_STATUS_SWITCH_LOGIC;
 
 const int relayActiveTime = 500;
 int door1_lastStatusValue = 2;
 int door2_lastStatusValue = 2;
+int door3_lastStatusValue = 2;
+int door4_lastStatusValue = 2;
 unsigned long door1_lastSwitchTime = 0;
 unsigned long door2_lastSwitchTime = 0;
+unsigned long door3_lastSwitchTime = 0;
+unsigned long door4_lastSwitchTime = 0;
 int debounceTime = 2000;
 
 String availabilityBase = MQTT_CLIENTID;
@@ -197,6 +210,88 @@ void publish_door2_status() {
   }
 }
 
+void publish_door3_status() {
+  if (digitalRead(door3_statusPin) == LOW) {
+    if (door3_statusSwitchLogic == "NO") {
+      Serial.print(door3_alias);
+      Serial.print(" closed! Publishing to ");
+      Serial.print(mqtt_door3_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door3_status_topic, "closed", true);
+    }
+    else if (door3_statusSwitchLogic == "NC") {
+      Serial.print(door3_alias);
+      Serial.print(" open! Publishing to ");
+      Serial.print(mqtt_door3_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door3_status_topic, "open", true);      
+    }
+    else {
+      Serial.println("Error! Specify only either NO or NC for door3_STATUS_SWITCH_LOGIC in config.h! Not publishing...");
+    }
+  }
+  else {
+    if (door3_statusSwitchLogic == "NO") {
+      Serial.print(door3_alias);
+      Serial.print(" open! Publishing to ");
+      Serial.print(mqtt_door3_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door3_status_topic, "open", true);
+    }
+    else if (door3_statusSwitchLogic == "NC") {
+      Serial.print(door3_alias);
+      Serial.print(" closed! Publishing to ");
+      Serial.print(mqtt_door3_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door3_status_topic, "closed", true);      
+    }
+    else {
+      Serial.println("Error! Specify only either NO or NC for door3_STATUS_SWITCH_LOGIC in config.h! Not publishing...");
+    }
+  }
+}
+
+void publish_door4_status() {
+  if (digitalRead(door4_statusPin) == LOW) {
+    if (door4_statusSwitchLogic == "NO") {
+      Serial.print(door4_alias);
+      Serial.print(" closed! Publishing to ");
+      Serial.print(mqtt_door4_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door4_status_topic, "closed", true);
+    }
+    else if (door4_statusSwitchLogic == "NC") {
+      Serial.print(door4_alias);
+      Serial.print(" open! Publishing to ");
+      Serial.print(mqtt_door4_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door4_status_topic, "open", true);      
+    }
+    else {
+      Serial.println("Error! Specify only either NO or NC for door4_STATUS_SWITCH_LOGIC in config.h! Not publishing...");
+    }
+  }
+  else {
+    if (door4_statusSwitchLogic == "NO") {
+      Serial.print(door4_alias);
+      Serial.print(" open! Publishing to ");
+      Serial.print(mqtt_door4_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door4_status_topic, "open", true);
+    }
+    else if (door4_statusSwitchLogic == "NC") {
+      Serial.print(door4_alias);
+      Serial.print(" closed! Publishing to ");
+      Serial.print(mqtt_door4_status_topic);
+      Serial.println("...");
+      client.publish(mqtt_door4_status_topic, "closed", true);      
+    }
+    else {
+      Serial.println("Error! Specify only either NO or NC for door4_STATUS_SWITCH_LOGIC in config.h! Not publishing...");
+    }
+  }
+}
+
 // Functions that run in loop() to check each loop if door status (open/closed) has changed and call publish_doorX_status() to publish any change if so
 
 void check_door1_status() {
@@ -219,6 +314,30 @@ void check_door2_status() {
       publish_door2_status();
       door2_lastStatusValue = currentStatusValue;
       door2_lastSwitchTime = currentTime;
+    }
+  }
+}
+
+void check_door3_status() {
+  int currentStatusValue = digitalRead(door3_statusPin);
+  if (currentStatusValue != door3_lastStatusValue) {
+    unsigned int currentTime = millis();
+    if (currentTime - door3_lastSwitchTime >= debounceTime) {
+      publish_door3_status();
+      door3_lastStatusValue = currentStatusValue;
+      door3_lastSwitchTime = currentTime;
+    }
+  }
+}
+
+void check_door4_status() {
+  int currentStatusValue = digitalRead(door4_statusPin);
+  if (currentStatusValue != door4_lastStatusValue) {
+    unsigned int currentTime = millis();
+    if (currentTime - door4_lastSwitchTime >= debounceTime) {
+      publish_door4_status();
+      door4_lastStatusValue = currentStatusValue;
+      door4_lastSwitchTime = currentTime;
     }
   }
 }
@@ -273,18 +392,6 @@ void triggerDoorAction(String requestedDoor, String requestedAction) {
     publish_birth_message();
     publish_door1_status();
   }
-  else if (requestedDoor == mqtt_door2_action_topic && requestedAction == "OPEN") {
-    Serial.print("Triggering ");
-    Serial.print(door2_alias);
-    Serial.println(" OPEN relay!");
-    toggleRelay(door2_openPin);
-  }
-  else if (requestedDoor == mqtt_door2_action_topic && requestedAction == "CLOSE") {
-    Serial.print("Triggering ");
-    Serial.print(door2_alias);
-    Serial.println(" CLOSE relay!");
-    toggleRelay(door2_closePin);
-  }
   else if (requestedDoor == mqtt_door2_action_topic && requestedAction == "STATE") {
     Serial.print("Publishing on-demand status update for ");
     Serial.print(door2_alias);
@@ -292,6 +399,20 @@ void triggerDoorAction(String requestedDoor, String requestedAction) {
     publish_birth_message();
     publish_door2_status();
   }  
+  else if (requestedDoor == mqtt_door3_action_topic && requestedAction == "STATE") {
+    Serial.print("Publishing on-demand status update for ");
+    Serial.print(door3_alias);
+    Serial.println("!");
+    publish_birth_message();
+    publish_door3_status();
+  } 
+  else if (requestedDoor == mqtt_door4_action_topic && requestedAction == "STATE") {
+    Serial.print("Publishing on-demand status update for ");
+    Serial.print(door4_alias);
+    Serial.println("!");
+    publish_birth_message();
+    publish_door4_status();
+  } 
   else { Serial.println("Unrecognized action payload... taking no action!");
   }
 }
@@ -315,17 +436,13 @@ void reconnect() {
       Serial.println("...");
       client.subscribe(mqtt_door1_action_topic);
       
-      if (door2_enabled) {
-        Serial.print("Subscribing to ");
-        Serial.print(mqtt_door2_action_topic);
-        Serial.println("...");
-        client.subscribe(mqtt_door2_action_topic);
-      }
 
       // Publish the current door status on connect/reconnect to ensure status is synced with whatever happened while disconnected
       publish_door1_status();
-      if (door2_enabled) { publish_door2_status();
-      }
+      publish_door2_status();
+	  publish_door3_status();
+      publish_door4_status();
+      
 
     } 
     else {
@@ -361,24 +478,24 @@ void setup() {
   door1_lastStatusValue = digitalRead(door1_statusPin);
 
   // Setup Door 2 pins
-  if (door2_enabled) {
-    pinMode(door2_openPin, OUTPUT);
-    pinMode(door2_closePin, OUTPUT);
-    // Set output pins LOW with an active-high relay
-    if (activeHighRelay) {
-      digitalWrite(door2_openPin, LOW);
-      digitalWrite(door2_closePin, LOW);
-    }
-    // Set output pins HIGH with an active-low relay
-    else {
-      digitalWrite(door2_openPin, HIGH);
-      digitalWrite(door2_closePin, HIGH);
-    }
-    // Set input pin to use internal pullup resistor
-    pinMode(door2_statusPin, INPUT_PULLUP);
-    // Update variable with current door state
-    door2_lastStatusValue = digitalRead(door2_statusPin);
-  }
+  // Set input pin to use internal pullup resistor
+  pinMode(door2_statusPin, INPUT_PULLUP);
+  // Update variable with current door state
+  door2_lastStatusValue = digitalRead(door2_statusPin);
+  
+  // Setup Door 3 pins
+  // Set input pin to use internal pullup resistor
+  pinMode(door3_statusPin, INPUT_PULLUP);
+  // Update variable with current door state
+  door3_lastStatusValue = digitalRead(door3_statusPin);
+  
+  // Setup Door 4 pins
+  // Set input pin to use internal pullup resistor
+  pinMode(door4_statusPin, INPUT_PULLUP);
+  // Update variable with current door state
+  door4_lastStatusValue = digitalRead(door4_statusPin);
+  
+
 
   // Setup serial output, connect to wifi, connect to MQTT broker, set MQTT message callback
   Serial.begin(115200);
@@ -406,6 +523,7 @@ void loop() {
   
   // Check door open/closed status each loop and publish changes
   check_door1_status();
-  if (door2_enabled) { check_door2_status(); 
-  }
+  check_door2_status(); 
+  check_door3_status(); 
+  check_door4_status(); 
 }
